@@ -1,492 +1,112 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#061326" />
-  <title>Coming Soon</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EASY RANKS · Brawl Stars Boosting · COMING SOON</title>
+<meta name="description" content="EASY RANKS – Brawl Stars Boosting Discord Server. Coming soon. Join our Discord: discord.gg/easyranks" />
+<meta name="theme-color" content="#05030a" />
 
-  <style>
-    :root {
-      --ice: #dff8ff;
-      --blue: #6fe5ff;
-      --deep: #061326;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
-    * { box-sizing: border-box; }
-
-    html, body {
-      width: 100%;
-      min-height: 100%;
-      margin: 0;
-    }
-
-    body {
-      min-height: 100svh;
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-      position: relative;
-      isolation: isolate;
-      color: white;
-      font-family: "Arial", "Helvetica Neue", sans-serif;
-      background:
-        radial-gradient(ellipse at 50% 42%, rgba(29, 110, 161, .32), transparent 42%),
-        linear-gradient(180deg, #030914 0%, #071a32 48%, #0b2943 100%);
-    }
-
-    .aurora {
-      position: absolute;
-      inset: -30% -20%;
-      z-index: -3;
-      pointer-events: none;
-      filter: blur(48px);
-      opacity: .5;
-      background:
-        radial-gradient(ellipse at 20% 35%, rgba(43, 222, 211, .24), transparent 32%),
-        radial-gradient(ellipse at 75% 25%, rgba(63, 121, 255, .26), transparent 35%),
-        radial-gradient(ellipse at 52% 70%, rgba(83, 199, 255, .17), transparent 34%);
-      animation: aurora 13s ease-in-out infinite alternate;
-    }
-
-    @keyframes aurora {
-      from { transform: translate3d(-2%, -1%, 0) rotate(-3deg) scale(1); }
-      to   { transform: translate3d(2%, 2%, 0) rotate(4deg) scale(1.08); }
-    }
-
-    .glow {
-      position: absolute;
-      z-index: -2;
-      width: min(75vw, 850px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(69, 194, 255, .14), transparent 68%);
-      filter: blur(14px);
-      pointer-events: none;
-    }
-
-    .forest {
-      position: absolute;
-      z-index: -1;
-      inset: auto 0 0;
-      height: clamp(140px, 26vh, 270px);
-      opacity: .72;
-      pointer-events: none;
-    }
-
-    .forest svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    #snow {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    main {
-      width: min(100% - 32px, 1100px);
-      text-align: center;
-      position: relative;
-      z-index: 3;
-      padding: 32px 0 90px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 26px;
-      color: #c5edff;
-      font-size: clamp(.65rem, 1.4vw, .85rem);
-      letter-spacing: .42em;
-      text-transform: uppercase;
-      opacity: .88;
-      animation: fadeIn 1.3s ease both;
-    }
-
-    .eyebrow::before,
-    .eyebrow::after {
-      content: "";
-      width: 30px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #8be9ff);
-    }
-
-    .eyebrow::after {
-      transform: rotate(180deg);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2.8rem, 10.5vw, 9rem);
-      line-height: .98;
-      font-weight: 900;
-      letter-spacing: clamp(.02em, .65vw, .095em);
-      text-transform: uppercase;
-      color: var(--ice);
-      position: relative;
-      animation: titleReveal 1.4s cubic-bezier(.2,.75,.2,1) both;
-      text-shadow:
-        0 1px 0 #b9f5ff,
-        0 2px 0 #8eeaff,
-        0 3px 0 #55cce9,
-        0 4px 0 #2587b4,
-        0 5px 0 #155c87,
-        0 8px 18px rgba(0, 0, 0, .65),
-        0 0 12px rgba(124, 232, 255, .95),
-        0 0 32px rgba(56, 194, 255, .78),
-        0 0 72px rgba(39, 147, 255, .5);
-    }
-
-    h1 span {
-      display: inline-block;
-      animation: ledPulse 4s ease-in-out 1.5s infinite;
-    }
-
-    .divider {
-      width: 94px;
-      height: 2px;
-      margin: 26px auto 0;
-      background: linear-gradient(90deg, transparent, #8feaff, transparent);
-      box-shadow: 0 0 18px #5cdfff;
-      animation: fadeIn 1.6s .5s ease both;
-    }
-
-    .sparkle {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: white;
-      box-shadow: 0 0 12px 3px rgba(139, 231, 255, .75);
-      animation: twinkle 2.5s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    .sparkle.one {
-      top: 17%;
-      left: 18%;
-    }
-
-    .sparkle.two {
-      top: 24%;
-      right: 19%;
-      animation-delay: .8s;
-    }
-
-    .sparkle.three {
-      bottom: 28%;
-      left: 24%;
-      animation-delay: 1.4s;
-    }
-
-    .sparkle.four {
-      bottom: 25%;
-      right: 25%;
-      animation-delay: .4s;
-    }
-
-    .bottom-note {
-      position: absolute;
-      z-index: 4;
-      bottom: max(22px, env(safe-area-inset-bottom));
-      left: 0;
-      right: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      text-align: center;
-      padding: 0 16px;
-      color: rgba(200, 231, 247, .65);
-      font-size: .7rem;
-      letter-spacing: .25em;
-      text-transform: uppercase;
-    }
-
-    .discord-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 13px 23px;
-      border: 1px solid rgba(143, 234, 255, .7);
-      border-radius: 999px;
-      color: #e8fbff;
-      background: rgba(25, 104, 147, .28);
-      box-shadow:
-        0 0 18px rgba(73, 205, 255, .2),
-        inset 0 0 16px rgba(73, 205, 255, .07);
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .14em;
-      text-decoration: none;
-      transition:
-        transform .25s ease,
-        background .25s ease,
-        box-shadow .25s ease,
-        border-color .25s ease;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .discord-button:hover,
-    .discord-button:focus-visible {
-      transform: translateY(-3px) scale(1.03);
-      background: rgba(38, 148, 195, .42);
-      border-color: #dffaff;
-      box-shadow:
-        0 0 28px rgba(73, 205, 255, .42),
-        0 0 55px rgba(73, 205, 255, .15),
-        inset 0 0 18px rgba(73, 205, 255, .12);
-      outline: none;
-    }
-
-    .discord-button svg {
-      width: 19px;
-      height: 19px;
-      fill: currentColor;
-      flex-shrink: 0;
-    }
-
-    @keyframes titleReveal {
-      from {
-        opacity: 0;
-        transform: translateY(24px) scale(.96);
-        filter: blur(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes ledPulse {
-      0%, 100% { filter: brightness(1); }
-      48% { filter: brightness(1.12); }
-      50% { filter: brightness(.9); }
-      52% { filter: brightness(1.16); }
-    }
-
-    @keyframes twinkle {
-      0%, 100% {
-        opacity: .25;
-        transform: scale(.7);
-      }
-      50% {
-        opacity: 1;
-        transform: scale(1.3);
-      }
-    }
-
-    @media (max-width: 520px) {
-      main {
-        padding-bottom: 45px;
-      }
-
-      .eyebrow {
-        letter-spacing: .25em;
-        margin-bottom: 22px;
-      }
-
-      .forest {
-        height: 19vh;
-      }
-
-      .bottom-note {
-        letter-spacing: .15em;
-        font-size: .62rem;
-      }
-
-      .discord-button {
-        padding: 12px 18px;
-        font-size: .68rem;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-      }
-    }
-  </style>
+<link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div class="aurora" aria-hidden="true"></div>
-  <div class="glow" aria-hidden="true"></div>
-  <canvas id="snow" aria-hidden="true"></canvas>
 
-  <span class="sparkle one" aria-hidden="true"></span>
-  <span class="sparkle two" aria-hidden="true"></span>
-  <span class="sparkle three" aria-hidden="true"></span>
-  <span class="sparkle four" aria-hidden="true"></span>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="fog fog-1" aria-hidden="true"></div>
+<div class="fog fog-2" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
 
-  <main>
-    <p class="eyebrow">Brawl Stars Boost Website</p>
+<div class="blood-top" id="bloodTop" aria-hidden="true"></div>
 
-    <h1>
-      <span>COMING<br class="mobile-break"> SOON...</span>
-    </h1>
+<svg class="web web-tl" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1.1">
+    <path d="M0 0 L200 0 M0 0 L200 45 M0 0 L165 105 M0 0 L105 165 M0 0 L45 200 M0 0 L0 200"/>
+    <path d="M0 55 Q32 48 58 30 Q82 14 92 0"/>
+    <path d="M0 105 Q52 92 98 62 Q134 40 152 0"/>
+    <path d="M0 155 Q72 138 132 100 Q176 66 190 0"/>
+  </g>
+</svg>
+<svg class="web web-tr" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1.1">
+    <path d="M0 0 L200 0 M0 0 L200 45 M0 0 L165 105 M0 0 L105 165 M0 0 L45 200 M0 0 L0 200"/>
+    <path d="M0 55 Q32 48 58 30 Q82 14 92 0"/>
+    <path d="M0 105 Q52 92 98 62 Q134 40 152 0"/>
+    <path d="M0 155 Q72 138 132 100 Q176 66 190 0"/>
+  </g>
+</svg>
+<svg class="web web-bl" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1.1">
+    <path d="M0 0 L200 0 M0 0 L200 45 M0 0 L165 105 M0 0 L105 165 M0 0 L45 200 M0 0 L0 200"/>
+    <path d="M0 55 Q32 48 58 30 Q82 14 92 0"/>
+    <path d="M0 105 Q52 92 98 62 Q134 40 152 0"/>
+  </g>
+</svg>
+<svg class="web web-br" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="none" stroke="currentColor" stroke-width="1.1">
+    <path d="M0 0 L200 0 M0 0 L200 45 M0 0 L165 105 M0 0 L105 165 M0 0 L45 200 M0 0 L0 200"/>
+    <path d="M0 55 Q32 48 58 30 Q82 14 92 0"/>
+    <path d="M0 105 Q52 92 98 62 Q134 40 152 0"/>
+  </g>
+</svg>
 
-    <div class="divider" aria-hidden="true"></div>
-  </main>
+<div class="spider" aria-hidden="true">
+  <div class="spider-thread"></div>
+  <div class="spider-body">🕷️</div>
+</div>
 
-  <div class="forest" aria-hidden="true">
-    <svg viewBox="0 0 1440 300"
-         preserveAspectRatio="xMidYMax slice"
-         xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="treeShade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#153d5c"/>
-          <stop offset="1" stop-color="#020916"/>
-        </linearGradient>
-      </defs>
+<div class="bats" id="bats" aria-hidden="true"></div>
 
-      <path fill="#0b2740"
-        d="M0 210 Q180 145 330 210 T660 195 T990 205 T1440 180 V300 H0Z"/>
+<div class="ground-fog" aria-hidden="true"></div>
 
-      <g fill="url(#treeShade)">
-        <path d="M30 300 L30 180 L-15 225 L10 220 L-22 255 L5 247 L-15 278 L30 267 L55 300Z"/>
-        <path d="M120 300 L120 125 L70 190 L99 183 L62 230 L95 220 L75 262 L120 247 L153 300Z"/>
-        <path d="M235 300 L235 165 L190 220 L216 213 L182 251 L211 244 L195 273 L235 260 L264 300Z"/>
-        <path d="M365 300 L365 105 L305 182 L341 174 L296 225 L332 215 L310 263 L365 245 L401 300Z"/>
-        <path d="M485 300 L485 160 L445 215 L468 207 L435 248 L463 240 L449 273 L485 260 L515 300Z"/>
-        <path d="M630 300 L630 120 L576 190 L608 181 L568 230 L601 220 L581 265 L630 248 L663 300Z"/>
-        <path d="M790 300 L790 155 L744 212 L771 204 L735 245 L765 236 L748 273 L790 258 L821 300Z"/>
-        <path d="M930 300 L930 95 L870 175 L906 167 L860 220 L896 211 L874 263 L930 245 L966 300Z"/>
-        <path d="M1085 300 L1085 150 L1040 208 L1066 201 L1032 243 L1061 235 L1045 272 L1085 259 L1118 300Z"/>
-        <path d="M1220 300 L1220 110 L1164 184 L1198 176 L1156 226 L1191 218 L1172 264 L1220 246 L1255 300Z"/>
-        <path d="M1370 300 L1370 145 L1325 205 L1351 197 L1318 240 L1346 232 L1330 270 L1370 255 L1400 300Z"/>
-      </g>
+<main class="stage">
 
-      <path fill="#020813"
-        d="M0 275 Q190 245 360 278 T720 266 T1080 278 T1440 250 V300 H0Z"/>
-    </svg>
-  </div>
+  <header class="site-header">
+    <h1 class="logo" data-text="EASY RANKS">EASY RANKS</h1>
+    <p class="tagline">🎃 Brawl Stars Boosting 🎃</p>
+  </header>
 
-  <div class="bottom-note">
-    <a
-      class="discord-button"
-      href="https://discord.gg/easyranks"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="EasyRanks Discord-Server beitreten"
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M19.7 5.3a18.4 18.4 0 0 0-4.5-1.4l-.6 1.2a16.8 16.8 0 0 0-5.2 0l-.6-1.2a18.4 18.4 0 0 0-4.5 1.4C1.5 9.5.7 13.6 1.1 17.7a18.6 18.6 0 0 0 5.6 3.1l1.2-2a11.8 11.8 0 0 1-1.9-.9l.5-.4a13.3 13.3 0 0 0 11 0l.5.4a11.8 11.8 0 0 1-1.9.9l1.2 2a18.6 18.6 0 0 0 5.6-3.1c.5-4.8-.8-8.9-3.2-12.4ZM8.8 15.1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2Zm6.4 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2Z"/>
+  <section class="hero">
+    <h2 class="coming-soon" id="comingSoon" data-text="COMING SOON...">COMING SOON...</h2>
+
+    <div class="candles" aria-hidden="true">
+      <span class="candle">🕯️</span>
+      <span class="candle c2">🕯️</span>
+      <span class="candle c3">🕯️</span>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a class="discord-btn"
+       href="https://discord.gg/easyranks"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Join the EASY RANKS Discord server">
+      <svg class="dc-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286ZM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189Zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
       </svg>
-
-      JOIN OUR DISCORD
+      <span>Join Discord</span>
     </a>
+    <p class="footer-note">discord.gg/easyranks</p>
+  </footer>
 
-    <span>Soon available...</span>
+</main>
+
+<div class="entry" id="entry">
+  <div class="entry-inner">
+    <div class="entry-pumpkin">🎃</div>
+    <h2 class="entry-title">EASY RANKS</h2>
+    <p class="entry-sub">Brawl Stars Boosting</p>
+    <button class="enter-btn" id="enterBtn" type="button">
+      <span>ENTER IF YOU DARE</span>
+    </button>
   </div>
+</div>
 
-  <script>
-    (() => {
-      const canvas = document.getElementById("snow");
-      const ctx = canvas.getContext("2d");
-      const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-
-      let width = 0;
-      let height = 0;
-      let flakes = [];
-
-      const flakeCount = Math.min(
-        150,
-        Math.floor((window.innerWidth * window.innerHeight) / 8500)
-      );
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-        width = window.innerWidth;
-        height = window.innerHeight;
-
-        canvas.width = Math.floor(width * dpr);
-        canvas.height = Math.floor(height * dpr);
-        canvas.style.width = width + "px";
-        canvas.style.height = height + "px";
-
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        flakes = Array.from(
-          { length: flakeCount },
-          () => makeFlake(true)
-        );
-      }
-
-      function makeFlake(randomY = false) {
-        return {
-          x: Math.random() * width,
-          y: randomY ? Math.random() * height : -10,
-          radius: Math.random() * 2.6 + .6,
-          speed: Math.random() * 1.1 + .35,
-          drift: (Math.random() - .5) * .65,
-          opacity: Math.random() * .65 + .2,
-          phase: Math.random() * Math.PI * 2
-        };
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, width, height);
-
-        for (const f of flakes) {
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(231, 248, 255, ${f.opacity})`;
-          ctx.shadowBlur = f.radius > 2 ? 8 : 3;
-          ctx.shadowColor = "rgba(139, 226, 255, .75)";
-          ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
-          ctx.fill();
-
-          if (!reducedMotion) {
-            f.y += f.speed;
-            f.x += f.drift + Math.sin(f.phase + f.y * .012) * .35;
-
-            if (f.y > height + 8) {
-              Object.assign(f, makeFlake(false));
-            }
-
-            if (f.x < -10) f.x = width + 10;
-            if (f.x > width + 10) f.x = -10;
-          }
-        }
-
-        ctx.shadowBlur = 0;
-
-        if (!reducedMotion) {
-          requestAnimationFrame(draw);
-        }
-      }
-
-      window.addEventListener("resize", resize, { passive: true });
-
-      resize();
-      draw();
-    })();
-  </script>
+<script src="script.js"></script>
 </body>
 </html>
