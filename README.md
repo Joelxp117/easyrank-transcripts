@@ -1,1 +1,1 @@
-# easyrank-transcripts
+# easyranks
