@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin · EasyRanks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/style.css" />
+</head>
+<body class="admin-body">
+
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+
+<header class="site-header">
+  <a class="logo-wrap" href="/">
+    <span class="logo-mark">⚡</span>
+    <span class="logo-text">EASYRANKS <em>admin</em></span>
+  </a>
+  <div class="auth-area">
+    <span class="user-chip" id="userChip">—</span>
+    <button class="btn ghost" id="logoutBtn" type="button">Logout</button>
+  </div>
+</header>
+
+<main class="admin-page">
+
+  <nav class="admin-tabs" id="adminTabs">
+    <button class="admin-tab active" data-tab="users" type="button">Users</button>
+    <button class="admin-tab" data-tab="orders" type="button">Orders</button>
+    <button class="admin-tab" data-tab="reviews" type="button">Reviews</button>
+    <button class="admin-tab" data-tab="bans" type="button">Bans</button>
+  </nav>
+
+  <section class="admin-panel active" id="admin-panel-users">
+    <div class="admin-toolbar">
+      <input class="search-input" id="searchInput" type="text"
+             placeholder="🔎 Search email, password, or IP…" autocomplete="off" />
+      <button class="btn ghost small" id="reloadBtn" type="button">↻ Reload</button>
+    </div>
+    <section class="admin-block">
+      <h2 class="admin-title">Users <span class="count-badge" id="userCount">0</span></h2>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Password</th>
+              <th>First IP</th>
+              <th>Last IP</th>
+              <th>Created</th>
+              <th>Last Login</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <section class="admin-panel" id="admin-panel-orders">
+    <div class="admin-toolbar">
+      <input class="search-input" id="orderSearch" type="text"
+             placeholder="🔎 Search email, code, rank, tx…" autocomplete="off" />
+      <button class="btn ghost small" id="reloadOrdersBtn" type="button">↻ Reload</button>
+    </div>
+    <section class="admin-block">
+      <h2 class="admin-title">Orders <span class="count-badge" id="orderCount">0</span></h2>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Rank</th>
+              <th>Price</th>
+              <th>Payment</th>
+              <th>Code</th>
+              <th>Status</th>
+              <th>Details</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <section class="admin-panel" id="admin-panel-reviews">
+    <div class="admin-toolbar">
+      <input class="search-input" id="reviewSearch" type="text"
+             placeholder="🔎 Search reviewer, feedback…" autocomplete="off" />
+      <button class="btn ghost small" id="reloadReviewsBtn" type="button">↻ Reload</button>
+    </div>
+    <div class="reviews-auto-note" style="padding:10px 14px;background:rgba(88,101,242,.08);border:1px solid rgba(88,101,242,.25);border-radius:10px;color:#b8b8d8;font-size:.82rem;margin-bottom:18px;">
+      Reviews are pushed automatically by your Discord bot.
+    </div>
+    <section class="admin-block">
+      <h2 class="admin-title">Reviews <span class="count-badge" id="reviewCount">0</span></h2>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Stars</th>
+              <th>Feedback</th>
+              <th>Order</th>
+              <th>Reply</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reviewsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <section class="admin-panel" id="admin-panel-bans">
+    <div class="admin-split">
+      <section class="admin-block">
+        <h2 class="admin-title">Banned Emails <span class="count-badge" id="bannedUserCount">0</span></h2>
+        <ul class="ban-list" id="bannedUsersList"></ul>
+      </section>
+      <section class="admin-block">
+        <h2 class="admin-title">Banned IPs <span class="count-badge" id="bannedIpCount">0</span></h2>
+        <ul class="ban-list" id="bannedIpsList"></ul>
+      </section>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-back" id="modalBack" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close">✕</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="static/sb.js"></script>
+<script src="static/admin.js"></script>
+</body>
+</html>
