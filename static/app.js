@@ -22,15 +22,6 @@
       desc: "Choose your current rank and the rank you want to reach. Our boosters will climb for you — fast, safe and secure.",
       cta: "Configure & Buy",
       type: "ranked"
-    },
-    {
-      id: "test",
-      badge: "🧪 Test",
-      title: "Test Product",
-      desc: "A test product to verify the payment system. Costs exactly 0.001 LTC plus a small unique salt.",
-      cta: "Buy Test",
-      type: "test",
-      fixed_ltc: 0.001
     }
   ];
 
@@ -273,9 +264,7 @@
     modalBody.innerHTML = `
       <h2 class="modal-title">📦 My Orders</h2>
       <p class="modal-sub">Loading your orders…</p>
-      <div id="ordersList" style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
-        <div style="text-align:center;padding:30px 0;"><span class="spinner"></span></div>
-      </div>
+      <div style="text-align:center;padding:30px 0;"><span class="spinner"></span></div>
     `;
     modalBack.hidden = false;
 
@@ -316,11 +305,9 @@
       </div>
     `;
 
-    // Copy code buttons
     modalBody.querySelectorAll("[data-copy-code]").forEach(btn => {
       btn.addEventListener("click", () => copyToClipboard(btn.dataset.copyCode, btn));
     });
-    // Copy tx buttons
     modalBody.querySelectorAll("[data-copy-tx]").forEach(btn => {
       btn.addEventListener("click", () => copyToClipboard(btn.dataset.copyTx, btn));
     });
@@ -331,7 +318,7 @@
       "paid": ["ok", "✓ Paid"],
       "pending": ["pending", "⏳ Pending"],
       "underpaid": ["underpaid", "⚠ Underpaid"],
-      "cancelled": ["cancelled", "✕ Cancelled"],
+      "cancelled": ["cancelled", "✕ Expired"],
     };
     const [cls, label] = map[status] || ["cancelled", status || "—"];
     return `<span class="status-pill ${cls}" style="font-size:.7rem;padding:4px 10px;">${label}</span>`;
@@ -352,18 +339,15 @@
       : "rgba(255,255,255,.1)";
 
     const rankLine = o.start_rank && o.target_rank
-      ? (o.start_rank === "Test" && o.target_rank === "Test"
-          ? "Test Product"
-          : `${escapeHtml(o.start_rank)} → ${escapeHtml(o.target_rank)}`)
+      ? `${escapeHtml(o.start_rank)} → ${escapeHtml(o.target_rank)}`
       : "—";
 
-    const priceLine = o.price_eur && Number(o.price_eur) > 0
-      ? `€${escapeHtml(String(o.price_eur))}`
-      : `0.001 LTC`;
+    const priceLine = `€${escapeHtml(String(o.price_eur || 0))}`;
 
-    let codeBlock = "";
+    let statusBlock = "";
+
     if (isPaid && o.code) {
-      codeBlock = `
+      statusBlock = `
         <div style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(52,214,122,.10),rgba(255,138,31,.05));border:1px solid rgba(52,214,122,.35);border-radius:10px;text-align:center;">
           <div style="font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Redemption Code</div>
           <div style="font-family:ui-monospace,Consolas,monospace;font-size:1.3rem;font-weight:900;color:#7cff8a;letter-spacing:3px;text-shadow:0 0 12px rgba(52,214,122,.5);margin-bottom:8px;word-break:break-all;">${escapeHtml(o.code)}</div>
@@ -371,21 +355,21 @@
         </div>
       `;
     } else if (isPending) {
-      codeBlock = `
+      statusBlock = `
         <div style="margin-top:10px;padding:10px 12px;background:rgba(255,138,31,.08);border-left:3px solid var(--orange);border-radius:8px;font-size:.82rem;color:#f0d0a8;line-height:1.5;">
-          Awaiting payment. Send <b>${escapeHtml(String(o.expected_ltc || "—"))} LTC</b> to the address shown at checkout.
+          Awaiting payment — send <b>${escapeHtml(String(o.expected_ltc || "—"))} LTC</b> within the payment window.
         </div>
       `;
     } else if (isUnderpaid) {
-      codeBlock = `
+      statusBlock = `
         <div style="margin-top:10px;padding:10px 12px;background:rgba(224,19,19,.08);border-left:3px solid var(--red-bright);border-radius:8px;font-size:.82rem;color:#f0c8c8;line-height:1.5;">
           ${escapeHtml(o.underpaid_reason || "Underpaid — please contact support on Discord.")}
         </div>
       `;
     } else if (isCancelled) {
-      codeBlock = `
+      statusBlock = `
         <div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,.03);border-left:3px solid var(--text-dim);border-radius:8px;font-size:.82rem;color:var(--text-dim);line-height:1.5;">
-          This order was cancelled.
+          Payment window expired — this order was cancelled because no payment was received within 15 minutes.
         </div>
       `;
     }
@@ -419,7 +403,7 @@
           ${o.paid_at ? ` · paid ${escapeHtml(fmtDate(o.paid_at))}` : ""}
         </div>
 
-        ${codeBlock}
+        ${statusBlock}
         ${txLine}
       </div>
     `;
@@ -462,7 +446,6 @@
         const product = PRODUCTS.find(p => p.id === id);
         if (!product) return;
         if (product.type === "ranked") openRankedModal();
-        else if (product.type === "test") openTestCheckout(product);
       });
     });
   }
@@ -546,42 +529,23 @@
     });
   }
 
-  /* ============ TEST CHECKOUT ============ */
-  function openTestCheckout(product) {
-    openCheckout({
-      mode: "test",
-      start: "Test",
-      target: "Test",
-      priceEur: 0,
-      fixedLtc: product.fixed_ltc || 0.001,
-    });
-  }
-
   /* ============ UNIFIED CHECKOUT ============ */
   async function openCheckout(opts) {
-    const { mode, start, target, priceEur, fixedLtc } = opts;
+    const { start, target, priceEur } = opts;
 
     let rate = 80;
-    let baseLito = 0;
+    try {
+      const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=eur");
+      const d = await r.json();
+      rate = d.litecoin?.eur || 80;
+    } catch {}
 
-    if (mode === "test") {
-      baseLito = Math.round((fixedLtc || 0.001) * 1e8);
-    } else {
-      try {
-        const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=eur");
-        const d = await r.json();
-        rate = d.litecoin?.eur || 80;
-      } catch {}
-      baseLito = Math.round((priceEur / rate) * 1e8);
-    }
-
+    const baseLito = Math.round((priceEur / rate) * 1e8);
     const salt = Math.floor(Math.random() * 90000) + 10000;
     const expectedLito = baseLito + salt;
     const expectedLtc = expectedLito / 1e8;
 
     const orderCreatedAt = new Date();
-
-    const priceDisplay = mode === "test" ? `0.001 LTC` : `€${priceEur}`;
 
     modalBody.innerHTML = `
       <div class="checkout-steps">
@@ -590,7 +554,7 @@
         <div class="checkout-step"></div>
       </div>
       <h2 class="modal-title">Pay with Litecoin</h2>
-      <p class="modal-sub">${escapeHtml(start)} → ${escapeHtml(target)} · <b>${priceDisplay}</b></p>
+      <p class="modal-sub">${escapeHtml(start)} → ${escapeHtml(target)} · <b>€${priceEur}</b></p>
 
       <div class="pay-warning">
         ⚠️ Send on the <b>Litecoin mainnet only</b>. Send the <b>exact amount</b> below. Payments are only accepted within <b>15 minutes</b> of placing the order.
@@ -621,7 +585,7 @@
     document.getElementById("copyAddr").addEventListener("click", e => copyToClipboard(LTC_ADDRESS, e.target));
     document.getElementById("copyAmt").addEventListener("click", e => copyToClipboard(expectedLtc.toFixed(8), e.target));
     document.getElementById("ltcCancel").addEventListener("click", () => {
-      if (confirm("Close? Your order stays pending and you can pay within the 15-minute window.")) closeModal();
+      if (confirm("Close? Your order stays pending for the remaining time of the 15-minute window.")) closeModal();
     });
 
     let orderId = null;
@@ -646,13 +610,14 @@
       return;
     }
 
+    // Polling: 112 * 8s = ~15 min
     let tries = 0;
     const maxTries = 112;
     activeOrderPoll = setInterval(async () => {
       tries++;
       if (tries > maxTries) {
         clearInterval(activeOrderPoll); activeOrderPoll = null;
-        toast("Timed out waiting for payment. Contact support if you paid.", "err");
+        openExpiredStep();
         return;
       }
       try {
@@ -727,6 +692,29 @@
       </div>
     `;
     document.getElementById("copyCode").addEventListener("click", e => copyToClipboard(code, e.target));
+    document.getElementById("doneBtn").addEventListener("click", closeModal);
+  }
+
+  function openExpiredStep() {
+    modalBody.innerHTML = `
+      <div class="checkout-steps">
+        <div class="checkout-step done"></div>
+        <div class="checkout-step done"></div>
+        <div class="checkout-step active"></div>
+      </div>
+      <h2 class="modal-title">⏰ Payment Window Expired</h2>
+      <p class="modal-sub">15 minutes passed without a matching payment.</p>
+      <div style="text-align:center;padding:20px 0;">
+        <div class="status-pill-lg err">Expired</div>
+      </div>
+      <p style="color:var(--text-dim);font-size:.9rem;line-height:1.6;">
+        This order has been cancelled. If you already sent the payment, please open a support ticket on our Discord so we can help you.
+      </p>
+      <div class="modal-actions" style="margin-top:20px;">
+        <a class="btn ghost" href="https://discord.gg/easyranks" target="_blank" rel="noopener">Open Discord</a>
+        <button class="btn primary" id="doneBtn" type="button">Close</button>
+      </div>
+    `;
     document.getElementById("doneBtn").addEventListener("click", closeModal);
   }
 
