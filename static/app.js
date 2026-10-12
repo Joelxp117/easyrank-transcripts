@@ -19,7 +19,7 @@
       id: "ranked",
       badge: "⚡ Most Popular",
       title: "Ranked Boost",
-      desc: "Choose your current rank and the rank you want to reach. Our boosters will climb for you — fast, safe and secure.",
+      desc: "Choose your current rank and the rank you want to reach. Our boosters will push for you — fast, safe and secure.",
       cta: "Configure & Buy",
       type: "ranked"
     }
