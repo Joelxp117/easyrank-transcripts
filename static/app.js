@@ -19,7 +19,7 @@
       id: "ranked",
       badge: "⚡ Most Popular",
       title: "Ranked Boost",
-      desc: "Choose your current rank and the rank you want to reach. Our boosters will push for you — fast, safe and secure.",
+      desc: "Choose your current rank and the rank you want to reach. Our boosters will climb for you — fast, safe and secure.",
       cta: "Configure & Buy",
       type: "ranked"
     }
@@ -48,7 +48,6 @@
   let clientIp = null;
   let activeOrderPoll = null;
 
-  /* ============ HELPERS ============ */
   function toast(msg, kind = "") {
     const el = document.createElement("div");
     el.className = "toast " + kind;
@@ -109,7 +108,6 @@
     return h.length > 16 ? h.slice(0, 8) + "…" + h.slice(-6) : h;
   }
 
-  /* ============ AUTH ============ */
   function renderAuth() {
     authArea.innerHTML = "";
     if (currentUser && currentUser.authenticated) {
@@ -162,6 +160,14 @@
     }
     try {
       const data = await sbRpc("api_me", { p_token: token });
+      if (data && data.banned) {
+        setToken(null);
+        currentUser = { authenticated: false };
+        renderAuth();
+        closeModal();
+        toast("Your account has been banned.", "err");
+        return;
+      }
       currentUser = data;
       if (!data.authenticated) setToken(null);
     } catch {
@@ -182,7 +188,6 @@
     toast("Logged out.", "ok");
   }
 
-  /* ============ MODAL ============ */
   function closeModal() {
     modalBack.hidden = true;
     modalBody.innerHTML = "";
@@ -257,7 +262,6 @@
     return false;
   }
 
-  /* ============ MY ORDERS ============ */
   async function openMyOrdersModal() {
     if (!ensureLoggedIn("view orders")) return;
 
@@ -409,7 +413,6 @@
     `;
   }
 
-  /* ============ TABS ============ */
   function switchPanel(name) {
     if (name === currentPanel) return;
     currentPanel = name;
@@ -426,7 +429,6 @@
     switchPanel(t.dataset.tab);
   });
 
-  /* ============ SHOP ============ */
   function renderShop() {
     const cards = PRODUCTS.map(p => `
       <div class="shop-product" data-product-id="${escapeHtml(p.id)}">
@@ -466,7 +468,6 @@
     return { total, steps };
   }
 
-  /* ============ RANKED MODAL ============ */
   function openRankedModal() {
     const startOptions = RANKS.slice(0, -1).map(r =>
       `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join("");
@@ -525,11 +526,10 @@
       const start = startSel.value, target = targetSel.value;
       const q = calculatePrice(start, target);
       if (!q) return;
-      openCheckout({ mode: "ranked", start, target, priceEur: q.total });
+      openCheckout({ start, target, priceEur: q.total });
     });
   }
 
-  /* ============ UNIFIED CHECKOUT ============ */
   async function openCheckout(opts) {
     const { start, target, priceEur } = opts;
 
@@ -610,7 +610,6 @@
       return;
     }
 
-    // Polling: 112 * 8s = ~15 min
     let tries = 0;
     const maxTries = 112;
     activeOrderPoll = setInterval(async () => {
@@ -668,7 +667,6 @@
     }
   }
 
-  /* ============ STATUS PAGES ============ */
   function openSuccessStep(code) {
     modalBody.innerHTML = `
       <div class="checkout-steps">
@@ -736,7 +734,6 @@
     document.getElementById("doneBtn").addEventListener("click", closeModal);
   }
 
-  /* ============ REVIEWS ============ */
   async function loadReviews() {
     try {
       const reviews = await sbSelect("reviews", "select=*&order=discord_timestamp.desc");
@@ -813,7 +810,6 @@
     toast("Reviews refreshed.", "ok");
   });
 
-  /* ============ INIT ============ */
   document.getElementById("year").textContent = new Date().getFullYear();
   (async () => {
     await refreshMe();
@@ -821,4 +817,5 @@
     loadReviews();
   })();
   setInterval(loadReviews, 60000);
+  setInterval(refreshMe, 15000);
 })();
