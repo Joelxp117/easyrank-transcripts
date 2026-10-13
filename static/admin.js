@@ -1,6 +1,24 @@
 (function () {
   "use strict";
 
+  const RANKS = [
+    "Mythic I", "Mythic II", "Mythic III",
+    "Legendary I", "Legendary II", "Legendary III",
+    "Master I", "Master II", "Master III",
+    "Pro"
+  ];
+  const STEP_PRICES = {
+    "Mythic I": 4, "Mythic II": 5, "Mythic III": 6,
+    "Legendary I": 8, "Legendary II": 10, "Legendary III": 12,
+    "Master I": 40, "Master II": 60, "Master III": 120
+  };
+  const PAYMENT_METHODS = [
+    "Litecoin",
+    "Paypal F&F only",
+    "Amazon Card (Germany only)",
+    "Manual"
+  ];
+
   const adminTabs = document.getElementById("adminTabs");
   adminTabs.addEventListener("click", e => {
     const t = e.target.closest(".admin-tab");
@@ -29,6 +47,7 @@
   const ordersBody = document.getElementById("ordersBody");
   const orderCount = document.getElementById("orderCount");
   const reloadOrdersBtn = document.getElementById("reloadOrdersBtn");
+  const generateCodeBtn = document.getElementById("generateCodeBtn");
 
   const reviewSearch = document.getElementById("reviewSearch");
   const reviewsBody = document.getElementById("reviewsBody");
@@ -105,7 +124,6 @@
   }
   async function loadAll() { await Promise.all([loadUsers(), loadBans(), loadOrders(), loadReviews()]); }
 
-  /* USERS */
   function renderUsers() {
     const q = searchInput.value.trim().toLowerCase();
     const filtered = !q ? allUsers : allUsers.filter(u =>
@@ -185,7 +203,6 @@
     });
   }
 
-  /* BANS */
   function renderBans() {
     bannedUserCount.textContent = String(bannedUsers.length);
     bannedIpCount.textContent = String(bannedIps.length);
@@ -205,7 +222,6 @@
     });
   }
 
-  /* ORDERS */
   function statusPill(s) {
     const map = {
       "paid": ["ok", "Paid"],
@@ -216,6 +232,7 @@
     const [c, l] = map[s] || ["cancelled", s || "—"];
     return `<span class="status-pill ${c}">${escapeHtml(l)}</span>`;
   }
+
   function renderOrders() {
     const q = orderSearch.value.trim().toLowerCase();
     const filtered = !q ? allOrders : allOrders.filter(o =>
@@ -233,18 +250,32 @@
     }
     ordersBody.innerHTML = "";
     filtered.forEach(o => {
-      const details = `
-        Expected: <b style="color:var(--orange-bright)">${escapeHtml(String(o.expected_ltc || "—"))} LTC</b><br>
-        Received: <span style="color:${o.amount_received_ltc ? "#7cff8a" : "var(--text-dim)"}">${escapeHtml(String(o.amount_received_ltc || "—"))} LTC</span>
-        ${o.tx_hash ? `<br><a href="https://blockchair.com/litecoin/transaction/${escapeHtml(o.tx_hash)}" target="_blank" rel="noopener" style="color:var(--orange-bright);font-size:.76rem">View TX ↗</a>` : ""}
-      `;
+      let details = "—";
+
+      if (o.tx_hash) {
+        details = `
+          Expected: <b style="color:var(--orange-bright)">${escapeHtml(String(o.expected_ltc || "—"))} LTC</b><br>
+          Received: <span style="color:${o.amount_received_ltc ? "#7cff8a" : "var(--text-dim)"}">${escapeHtml(String(o.amount_received_ltc || "—"))} LTC</span>
+          <br><a href="https://blockchair.com/litecoin/transaction/${escapeHtml(o.tx_hash)}" target="_blank" rel="noopener" style="color:var(--orange-bright);font-size:.76rem">View TX ↗</a>
+        `;
+      } else if (o.expected_ltc) {
+        details = `
+          Expected: <b style="color:var(--orange-bright)">${escapeHtml(String(o.expected_ltc))} LTC</b><br>
+          <span style="color:var(--text-dim);font-size:.76rem">Awaiting payment</span>
+        `;
+      } else if (o.redeemed_by) {
+        details = `<span style="color:#7cff8a;font-size:.78rem">Redeemed by user ${escapeHtml(String(o.redeemed_by))}</span>`;
+      }
+
+      const isRedeemed = !!o.redeemed_by;
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td class="mono" style="font-size:.78rem">${escapeHtml(o.email || "—")}</td>
         <td style="font-size:.8rem">${escapeHtml(o.start_rank || "")} → ${escapeHtml(o.target_rank || "")}</td>
         <td style="font-weight:800;color:var(--orange-bright)">€${escapeHtml(String(o.price_eur || "0"))}</td>
         <td style="font-size:.82rem">${escapeHtml(o.payment || "—")}</td>
-        <td class="code-cell">${o.code ? escapeHtml(o.code) : "—"}</td>
+        <td class="code-cell">${o.code ? escapeHtml(o.code) : "—"}${isRedeemed ? ' <span style="color:#34d67a;font-size:.7rem;">●</span>' : ""}</td>
         <td>${statusPill(o.status)}</td>
         <td style="font-size:.78rem;color:#b8b8d8;line-height:1.5">${details}</td>
         <td style="font-size:.78rem;color:var(--text-dim)">${escapeHtml(fmtDate(o.created_at))}</td>
@@ -263,7 +294,6 @@
     });
   }
 
-  /* REVIEWS */
   function renderReviews() {
     const q = reviewSearch.value.trim().toLowerCase();
     const filtered = !q ? allReviews : allReviews.filter(r =>
@@ -339,7 +369,141 @@
     });
   }
 
-  /* CLICK ROUTER */
+  function calcPrice(start, target) {
+    const si = RANKS.indexOf(start);
+    const ti = RANKS.indexOf(target);
+    if (si < 0 || ti < 0 || ti <= si) return null;
+    let total = 0;
+    for (let i = si; i < ti; i++) {
+      const p = STEP_PRICES[RANKS[i]];
+      if (p == null) return null;
+      total += p;
+    }
+    return total;
+  }
+
+  function openGenerateCodeModal() {
+    const startOptions = RANKS.slice(0, -1).map(r =>
+      `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join("");
+    const paymentOptions = PAYMENT_METHODS.map(p =>
+      `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("");
+
+    modalBody.innerHTML = `
+      <h2 class="modal-title">🎫 Generate Custom Code</h2>
+      <p class="modal-sub">Create a redeemable code manually. It will be marked as paid and can be used once on Discord.</p>
+      <form class="modal-form" id="genForm">
+        <label style="font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);">Start Rank</label>
+        <select name="start" id="genStart" style="padding:13px 16px;background:var(--bg-2);border:1px solid var(--line-strong);border-radius:12px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;">${startOptions}</select>
+
+        <label style="font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;">Target Rank</label>
+        <select name="target" id="genTarget" style="padding:13px 16px;background:var(--bg-2);border:1px solid var(--line-strong);border-radius:12px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;"></select>
+
+        <label style="font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;">Price (EUR)</label>
+        <input type="number" step="0.01" min="0" name="price" id="genPrice" required />
+
+        <label style="font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;">Payment Method</label>
+        <select name="payment" style="padding:13px 16px;background:var(--bg-2);border:1px solid var(--line-strong);border-radius:12px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;">${paymentOptions}</select>
+
+        <label style="font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-top:4px;">Email (optional, for reference)</label>
+        <input type="text" name="email" id="genEmail" placeholder="customer@example.com or leave empty" />
+
+        <div class="form-error" id="genErr"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="genCancel">Cancel</button>
+          <button type="submit" class="btn primary">Generate Code</button>
+        </div>
+      </form>
+    `;
+    modalBack.hidden = false;
+
+    const startSel = document.getElementById("genStart");
+    const targetSel = document.getElementById("genTarget");
+    const priceInput = document.getElementById("genPrice");
+
+    function refreshTargets() {
+      const si = RANKS.indexOf(startSel.value);
+      const available = RANKS.slice(si + 1);
+      targetSel.innerHTML = available.map(r =>
+        `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join("");
+      if (available.length) targetSel.value = available[0];
+      autoFillPrice();
+    }
+
+    function autoFillPrice() {
+      const p = calcPrice(startSel.value, targetSel.value);
+      if (p != null) priceInput.value = p.toFixed(2);
+    }
+
+    startSel.addEventListener("change", refreshTargets);
+    targetSel.addEventListener("change", autoFillPrice);
+    refreshTargets();
+
+    document.getElementById("genCancel").addEventListener("click", closeModal);
+
+    document.getElementById("genForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const errEl = document.getElementById("genErr");
+      errEl.textContent = "";
+
+      const start = startSel.value;
+      const target = targetSel.value;
+      const price = parseFloat(priceInput.value);
+      const payment = e.target.payment.value;
+      const email = (document.getElementById("genEmail").value || "").trim();
+
+      if (!start || !target) { errEl.textContent = "Pick both ranks."; return; }
+      if (isNaN(price) || price < 0) { errEl.textContent = "Invalid price."; return; }
+
+      try {
+        const res = await rpc("admin_create_custom_code", {
+          p_start: start,
+          p_target: target,
+          p_price: price,
+          p_payment: payment,
+          p_email: email,
+        });
+        openGeneratedCodeModal(res.code, start, target, price, payment, email);
+        await loadOrders();
+      } catch (err) {
+        errEl.textContent = "Failed: " + err.message;
+      }
+    });
+  }
+
+  function openGeneratedCodeModal(code, start, target, price, payment, email) {
+    modalBody.innerHTML = `
+      <h2 class="modal-title">✅ Code Generated</h2>
+      <p class="modal-sub">Give this code to the customer. It can be redeemed once on Discord.</p>
+
+      <div style="text-align:center;padding:26px 20px;background:linear-gradient(135deg,rgba(52,214,122,.12),rgba(255,138,31,.06));border:1px solid rgba(52,214,122,.4);border-radius:16px;margin-bottom:16px;">
+        <div style="font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;">Redemption Code</div>
+        <div style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(1.5rem,4vw,2rem);font-weight:900;color:#7cff8a;letter-spacing:4px;text-shadow:0 0 20px rgba(52,214,122,.6);word-break:break-all;margin-bottom:12px;">${escapeHtml(code)}</div>
+        <button class="copy-btn" id="copyGeneratedCode" type="button">📋 Copy Code</button>
+      </div>
+
+      <div style="padding:14px;background:var(--bg-2);border-radius:10px;border:1px solid var(--line);font-size:.82rem;color:var(--text-dim);line-height:1.7;">
+        <b style="color:var(--text)">Ranks:</b> ${escapeHtml(start)} → ${escapeHtml(target)}<br>
+        <b style="color:var(--text)">Price:</b> €${escapeHtml(String(price))}<br>
+        <b style="color:var(--text)">Payment:</b> ${escapeHtml(payment)}
+        ${email ? `<br><b style="color:var(--text)">Email:</b> ${escapeHtml(email)}` : ""}
+      </div>
+
+      <div class="modal-actions" style="margin-top:20px;">
+        <button class="btn primary block" id="genDone" type="button">Done</button>
+      </div>
+    `;
+
+    const btn = document.getElementById("copyGeneratedCode");
+    btn.addEventListener("click", () => {
+      navigator.clipboard.writeText(code).then(() => {
+        const old = btn.textContent;
+        btn.textContent = "✓ Copied";
+        setTimeout(() => { btn.textContent = old; }, 1400);
+      }).catch(() => toast("Copy failed.", "err"));
+    });
+    document.getElementById("genDone").addEventListener("click", closeModal);
+  }
+
   document.addEventListener("click", async e => {
     const btn = e.target.closest("button[data-act]");
     if (!btn) return;
@@ -404,6 +568,7 @@
   reloadBtn.addEventListener("click", async () => { await loadUsers(); toast("Reloaded.", "ok"); });
   reloadOrdersBtn.addEventListener("click", async () => { await loadOrders(); toast("Reloaded.", "ok"); });
   reloadReviewsBtn.addEventListener("click", async () => { await loadReviews(); toast("Reloaded.", "ok"); });
+  generateCodeBtn.addEventListener("click", openGenerateCodeModal);
 
   logoutBtn.addEventListener("click", async () => {
     const token = localStorage.getItem("er_token");
