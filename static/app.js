@@ -235,6 +235,12 @@
         const fn = isLogin ? "api_login" : "api_register";
         const data = await sbRpc(fn, { p_email: email, p_password: password, p_ip: ip });
         if (data.error) throw new Error(data.error);
+
+        if (data.requires_2fa) {
+          open2FAModal(email);
+          return;
+        }
+
         setToken(data.token);
         toast(isLogin ? "Welcome back!" : "Account created!", "ok");
         await refreshMe();
@@ -247,6 +253,51 @@
           invalid_credentials: "Wrong email or password.",
           ip_banned: "Your IP has been banned.",
           user_banned: "This account has been banned.",
+        };
+        errEl.textContent = map[err.message] || ("Error: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
+  function open2FAModal(email) {
+    modalBody.innerHTML = `
+      <h2 class="modal-title">🔐 Two-Factor Authentication</h2>
+      <p class="modal-sub">We sent a 6-digit code to your Discord DM. Enter it below to finish signing in.</p>
+      <form class="modal-form" id="twoFaForm">
+        <input type="text" name="code" placeholder="000000" maxlength="6"
+               inputmode="numeric" autocomplete="one-time-code"
+               pattern="[0-9]{6}" required
+               style="text-align:center;font-family:ui-monospace,Consolas,monospace;font-size:1.6rem;letter-spacing:10px;padding:16px;" />
+        <div class="form-error" id="twoFaErr"></div>
+        <button type="submit" class="btn primary block">Verify</button>
+      </form>
+      <p class="modal-footer-note">Didn't receive a code? Check your Discord DMs.</p>
+    `;
+    modalBack.hidden = false;
+
+    const form = document.getElementById("twoFaForm");
+    const errEl = document.getElementById("twoFaErr");
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const code = form.code.value.trim();
+      errEl.textContent = "";
+      const submitBtn = form.querySelector("button[type=submit]");
+      submitBtn.disabled = true;
+      try {
+        const ip = await fetchClientIp();
+        const data = await sbRpc("api_verify_2fa", { p_email: email, p_code: code, p_ip: ip });
+        if (data.error) throw new Error(data.error);
+        setToken(data.token);
+        toast("Welcome back!", "ok");
+        await refreshMe();
+        closeModal();
+      } catch (err) {
+        const map = {
+          invalid_code: "Wrong code. Try again.",
+          too_many_attempts: "Too many attempts. Please log in again.",
+          no_pending_2fa: "Code expired. Please log in again.",
         };
         errEl.textContent = map[err.message] || ("Error: " + err.message);
       } finally {
