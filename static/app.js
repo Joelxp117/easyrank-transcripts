@@ -189,9 +189,15 @@
     toast("Logged out.", "success");
   }
 
+  function openModal() {
+    modalBackdrop.hidden = false;
+    document.body.classList.add("modal-open");
+  }
+
   function closeModal() {
     modalBackdrop.hidden = true;
     modalContent.innerHTML = "";
+    document.body.classList.remove("modal-open");
     if (activeOrderPoll) { clearInterval(activeOrderPoll); activeOrderPoll = null; }
     if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
   }
@@ -221,7 +227,7 @@
         <a href="#" id="switchAuthMode">${isLogin ? "Sign up" : "Login"}</a>
       </p>
     `;
-    modalBackdrop.hidden = false;
+    openModal();
 
     const form = document.getElementById("authForm");
     const errorEl = document.getElementById("authError");
@@ -283,7 +289,7 @@
       </form>
       <p class="form-footer">Didn't receive a code? Check your Discord DMs.</p>
     `;
-    modalBackdrop.hidden = false;
+    openModal();
 
     const form = document.getElementById("twoFaForm");
     const errorEl = document.getElementById("twoFaError");
@@ -361,7 +367,7 @@
           <img src="${CDN}Pro.png" alt="Pro" />
         </div>
         <h2>Ranked Boost</h2>
-        <p>Get from any rank to your target — handled by verified professional boosters.</p>
+        <p>Climb from any rank to your target — handled by verified professional boosters.</p>
       </div>
 
       <div class="rank-strip">${rankStrip}</div>
@@ -371,11 +377,11 @@
           <div class="shop-card-banner">
             <span class="shop-card-badge">⚡ Most Popular</span>
             <div class="shop-card-title">Ranked Boost</div>
-            <div class="shop-card-subtitle">Any rank</div>
+            <div class="shop-card-subtitle">Any rank · Any target</div>
           </div>
           <div class="shop-card-body">
             <div class="shop-card-desc">
-              Choose your current rank and target rank. Our professional boosters will push for you — fast, safe, and secure.
+              Choose your current rank and target rank. Our professional boosters will climb for you — fast, safe, and secure.
             </div>
             <div class="shop-card-features">
               <div class="shop-card-feature">
@@ -484,7 +490,7 @@
         <button class="btn btn-primary" id="continueStep" type="button">Continue →</button>
       </div>
     `;
-    modalBackdrop.hidden = false;
+    openModal();
 
     let selectedStart = "Mythic I";
     let selectedTarget = "Mythic II";
@@ -621,7 +627,7 @@
         <button class="btn btn-primary" id="payBtn" type="button" disabled>Pay with Litecoin →</button>
       </div>
     `;
-    modalBackdrop.hidden = false;
+    openModal();
 
     let selectedMethod = null;
     document.querySelectorAll(".pay-method-card").forEach(card => {
@@ -715,7 +721,7 @@
         <button class="btn btn-ghost btn-block" id="closePayment" type="button">Close</button>
       </div>
     `;
-    modalBackdrop.hidden = false;
+    openModal();
 
     document.getElementById("copyAddressBtn").addEventListener("click", e => copyText(LTC_ADDRESS, e.target));
     document.getElementById("copyAmountBtn").addEventListener("click", e => copyText(expectedLtc.toFixed(8), e.target));
@@ -828,6 +834,7 @@
         <button class="btn btn-primary btn-block" id="finishBtn" type="button">Done</button>
       </div>
     `;
+    openModal();
     document.getElementById("copyCodeBtn").addEventListener("click", e => copyText(code, e.target));
     document.getElementById("finishBtn").addEventListener("click", closeModal);
   }
@@ -852,6 +859,7 @@
         <button class="btn btn-primary" id="finishBtn" type="button">Close</button>
       </div>
     `;
+    openModal();
     document.getElementById("finishBtn").addEventListener("click", closeModal);
   }
 
@@ -874,6 +882,7 @@
         <button class="btn btn-primary" id="finishBtn" type="button">Close</button>
       </div>
     `;
+    openModal();
     document.getElementById("finishBtn").addEventListener("click", closeModal);
   }
 
@@ -959,7 +968,7 @@
         <div class="skeleton" style="height:110px;"></div>
       </div>
     `;
-    modalBackdrop.hidden = false;
+    openModal();
 
     let orders = [];
     try {
@@ -1179,6 +1188,7 @@
         <button class="btn btn-primary" id="closeDetail" type="button">Close</button>
       </div>
     `;
+    openModal();
 
     document.getElementById("backToOrders").addEventListener("click", openMyOrdersModal);
     document.getElementById("closeDetail").addEventListener("click", closeModal);
