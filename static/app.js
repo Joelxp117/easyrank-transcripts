@@ -377,11 +377,11 @@
           <div class="shop-card-banner">
             <span class="shop-card-badge">⚡ Most Popular</span>
             <div class="shop-card-title">Ranked Boost</div>
-            <div class="shop-card-subtitle">Any rank · Any target</div>
+            <div class="shop-card-subtitle">Any rank</div>
           </div>
           <div class="shop-card-body">
             <div class="shop-card-desc">
-              Choose your current rank and target rank. Our professional boosters will climb for you — fast, safe, and secure.
+              Choose your current rank and target rank. Our professional boosters will push for you — fast, safe, and secure.
             </div>
             <div class="shop-card-features">
               <div class="shop-card-feature">
