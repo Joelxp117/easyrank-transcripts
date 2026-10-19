@@ -5,22 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Admin · EasyRanks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="static/style.css" />
 </head>
 <body class="admin-body">
 
-<div class="bg-glow" aria-hidden="true"></div>
+<div class="bg-aura" aria-hidden="true"></div>
 <div class="bg-grid" aria-hidden="true"></div>
 
 <header class="site-header">
   <a class="logo-wrap" href="/">
-    <span class="logo-mark">⚡</span>
-    <span class="logo-text">EASYRANKS <em>admin</em></span>
+    <span class="logo-emblem">⚡</span>
+    <span class="logo-text">EASY<em>RANKS</em> <em style="font-size:.6rem;opacity:.6;">ADMIN</em></span>
   </a>
   <div class="auth-area">
     <span class="user-chip" id="userChip">—</span>
-    <button class="btn ghost" id="logoutBtn" type="button">Logout</button>
+    <button class="btn btn-ghost btn-sm" id="logoutBtn" type="button">Logout</button>
   </div>
 </header>
 
@@ -35,9 +36,8 @@
 
   <section class="admin-panel active" id="admin-panel-users">
     <div class="admin-toolbar">
-      <input class="search-input" id="searchInput" type="text"
-             placeholder="🔎 Search email, password, or IP…" autocomplete="off" />
-      <button class="btn ghost small" id="reloadBtn" type="button">↻ Reload</button>
+      <input class="search-input" id="searchInput" type="text" placeholder="🔎 Search email, password, or IP…" autocomplete="off" />
+      <button class="btn btn-ghost btn-sm" id="reloadBtn" type="button">↻ Reload</button>
     </div>
     <section class="admin-block">
       <h2 class="admin-title">Users <span class="count-badge" id="userCount">0</span></h2>
@@ -63,10 +63,9 @@
 
   <section class="admin-panel" id="admin-panel-orders">
     <div class="admin-toolbar">
-      <input class="search-input" id="orderSearch" type="text"
-             placeholder="🔎 Search email, code, rank, tx…" autocomplete="off" />
-      <button class="btn primary small" id="generateCodeBtn" type="button">🎫 Generate Code</button>
-      <button class="btn ghost small" id="reloadOrdersBtn" type="button">↻ Reload</button>
+      <input class="search-input" id="orderSearch" type="text" placeholder="🔎 Search email, code, rank, tx…" autocomplete="off" />
+      <button class="btn btn-primary btn-sm" id="generateCodeBtn" type="button">🎫 Generate Code</button>
+      <button class="btn btn-ghost btn-sm" id="reloadOrdersBtn" type="button">↻ Reload</button>
     </div>
     <section class="admin-block">
       <h2 class="admin-title">Orders <span class="count-badge" id="orderCount">0</span></h2>
@@ -93,11 +92,10 @@
 
   <section class="admin-panel" id="admin-panel-reviews">
     <div class="admin-toolbar">
-      <input class="search-input" id="reviewSearch" type="text"
-             placeholder="🔎 Search reviewer, feedback…" autocomplete="off" />
-      <button class="btn ghost small" id="reloadReviewsBtn" type="button">↻ Reload</button>
+      <input class="search-input" id="reviewSearch" type="text" placeholder="🔎 Search reviewer, feedback…" autocomplete="off" />
+      <button class="btn btn-ghost btn-sm" id="reloadReviewsBtn" type="button">↻ Reload</button>
     </div>
-    <div class="reviews-auto-note" style="padding:10px 14px;background:rgba(88,101,242,.08);border:1px solid rgba(88,101,242,.25);border-radius:10px;color:#b8b8d8;font-size:.82rem;margin-bottom:18px;">
+    <div class="reviews-auto-note" style="padding:12px 16px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:var(--radius-sm);color:#ddd6fe;font-size:.82rem;margin-bottom:18px;">
       Reviews are pushed automatically by your Discord bot.
     </div>
     <section class="admin-block">
@@ -135,14 +133,14 @@
 
 </main>
 
-<div class="modal-back" id="modalBack" hidden>
+<div class="modal-backdrop" id="modalBackdrop" hidden>
   <div class="modal" role="dialog" aria-modal="true">
     <button class="modal-close" id="modalClose" type="button" aria-label="Close">✕</button>
-    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-content" id="modalContent"></div>
   </div>
 </div>
 
-<div class="toast-wrap" id="toastWrap"></div>
+<div class="toast-stack" id="toastStack"></div>
 
 <script src="static/sb.js"></script>
 <script src="static/admin.js"></script>
