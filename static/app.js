@@ -367,7 +367,7 @@
           <img src="${CDN}Pro.png" alt="Pro" />
         </div>
         <h2>Ranked Boost</h2>
-        <p>Climb from any rank to your target — handled by verified professional boosters.</p>
+        <p>Get from any rank to your dream rank — handled by verified professional boosters.</p>
       </div>
 
       <div class="rank-strip">${rankStrip}</div>
